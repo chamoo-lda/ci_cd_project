@@ -27,23 +27,11 @@ terraform {
       version = "~> 6.0"
     }
   }
-
-  # ─── FOR LATER: Remote state storage ──────────────────────
-  # Right now, your Terraform state (.tfstate) is saved
-  # locally in this folder. If you work in a team, you want
-  # state stored in S3 so everyone uses the same state.
-  # Uncomment below AFTER creating the S3 bucket + DynamoDB table:
-  #
-  # backend "s3" {
-  #   bucket         = "ci-cd-project-terraform-state"
-  #   key            = "terraform.tfstate"
-  #   region         = "eu-west-1"
-  #   dynamodb_table = "ci-cd-project-terraform-locks"
-  #   encrypt        = true
-  # }
 }
 
+#=============================
 # Terraform to AWS connection
+#=============================
 provider "aws" {
   region = var.aws_region
 
