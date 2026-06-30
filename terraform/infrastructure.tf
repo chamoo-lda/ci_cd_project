@@ -22,8 +22,8 @@ data "aws_ami" "ubuntu" {
 # SSH Key creation
 #================================
 resource "aws_key_pair" "deployer" {
-  key_name   = "app_server-key-chamoo"
-  public_key = "${file("/home/chamoo/.ssh/ci-cd-project-key.pub")}"
+  key_name   = "ansible-user"
+  public_key = "${file("/home/chamoo/.ssh/ansible-user.pub")}"
 }
 
 #=================================
@@ -61,7 +61,7 @@ resource "aws_security_group" "webserver_access" {
 resource "aws_instance" "server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
-  key_name = "app_server-key-chamoo"
+  key_name = "ansible-user"
   security_groups = ["${aws_security_group.webserver_access.name}"]
 
   tags = {
