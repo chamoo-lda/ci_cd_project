@@ -1,0 +1,28 @@
+# inventory/aws_ec2.yml
+plugin: amazon.aws.aws_ec2
+profile: terraform-access
+
+regions:
+  - eu-west-1
+
+filters:
+  instance-state-name: running
+  # tag:Environment: production   # optional: filter by tags
+
+keyed_groups:
+  # Group by tag, e.g. tag_Environment_production
+  - key: ec2_tags.Environment
+    prefix: tag_Environment
+  - key: ec2_tags.Role
+    prefix: tag_Role
+  - key: instance_type
+    prefix: instance_type
+
+hostnames:
+  - tag:Name
+  - dns-name
+
+compose:
+  ansible_host: public_ip_address
+  tags: ec2_tags
+  # use private_ip_address if running inside the VPC

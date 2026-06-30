@@ -1,0 +1,37 @@
+---
+- name: Install and configure Apache on EC2 instances
+  hosts: aws_ec2
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.10
+
+  tasks:
+    - name: Update apt package cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Upgrade all packages to the latest version
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Install Apache2
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+
+    - name: Ensure Apache is started and enabled on boot
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: true
+
+    - name: Confirm Apache is responding
+      ansible.builtin.uri:
+        url: "http://localhost"
+        status_code: 200
+      register: apache_check
+
+    - name: Show Apache check result
+      ansible.builtin.debug:
+        msg: "Apache is up and responding with status {{ apache_check.status }}"
