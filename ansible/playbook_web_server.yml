@@ -39,13 +39,13 @@
         dest: "/home/ubuntu/ci_cd_project"
 
     - name: Build Docker image from Dockerfile
-      ansible.builtin.docker_image:
+      community.docker.docker_image:
         name: dbs_web_app
         path: /home/ubuntu/ci_cd_project
         buildargs:
 
     - name: Run Docker container
-      ansible.builtin.docker_container:
+      community.docker.docker_container:
         name: dbs_web_app_container
         image: dbs_web_app
         state: started
