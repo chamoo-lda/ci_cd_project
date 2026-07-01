@@ -38,6 +38,12 @@
         repo: "https://github.com/chamoo-lda/ci_cd_project.git"
         dest: "/home/ubuntu/ci_cd_project"
 
+    - name: Git pull the latest changes from the repository
+      ansible.builtin.git:
+        repo: "https://github.com/chamoo-lda/ci_cd_project.git"
+        dest: "/home/ubuntu/ci_cd_project"
+        force: true
+
     - name: Build Docker image from Dockerfile
       community.docker.docker_image:
         name: dbs_web_app
