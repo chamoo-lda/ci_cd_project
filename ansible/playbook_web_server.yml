@@ -69,3 +69,9 @@
         restart_policy: always
         ports:
           - "80:80"
+
+    - name: Confirm webserver in docker container is running
+      ansible.builtin.uri:
+        url: "http://localhost"
+        status_code: 200
+      register: webserver_check
