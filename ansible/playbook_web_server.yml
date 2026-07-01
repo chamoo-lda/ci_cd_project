@@ -6,6 +6,7 @@
     ansible_python_interpreter: /usr/bin/python3.10
 
   tasks:
+    # Update and upgrade packages
     - name: Update apt package cache
       ansible.builtin.apt:
         update_cache: true
@@ -15,11 +16,18 @@
       ansible.builtin.apt:
         upgrade: dist
 
+    # Install Apache2 and Docker on the EC2 instances
     - name: Install Apache2
       ansible.builtin.apt:
         name: apache2
         state: present
 
+    - name: Install Docker
+      ansible.builtin.apt:
+        name: docker.io
+        state: present
+
+    # Start and enable Apache service
     - name: Ensure Apache is started and enabled on boot
       ansible.builtin.service:
         name: apache2
