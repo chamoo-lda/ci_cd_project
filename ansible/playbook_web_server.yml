@@ -9,10 +9,10 @@
   hosts: aws_ec2
   become: true
   vars:
-    ansible_python_interpreter: auto # let Ansible auto-detect the system Python
+    ansible_python_interpreter: auto
 
   tasks:
-    # ---- Package management ----
+    # Software update
     - name: Update apt package cache
       ansible.builtin.apt:
         update_cache: true
@@ -32,7 +32,7 @@
         name: git
         state: present
 
-    # ---- Docker SDK (required by community.docker modules) ----
+    # Docker installation
     - name: Install pip on the target
       ansible.builtin.apt:
         name: python3-pip
@@ -43,14 +43,14 @@
         name: docker
         state: present
 
-    # ---- Source code ----
+    # GIT repository management
     - name: Clone or update the repository
       ansible.builtin.git:
         repo: "https://github.com/chamoo-lda/ci_cd_project.git"
         dest: "/home/ubuntu/ci_cd_project"
-        force: true # overwrite local changes on re-run
+        force: true
 
-    # ---- Docker image ----
+    # Docker image creation
     - name: Build Docker image from Dockerfile
       community.docker.docker_image:
         name: dbs_web_app
@@ -59,7 +59,7 @@
           path: /home/ubuntu/ci_cd_project
         state: present
 
-    # ---- Docker container ----
+    # Docker container creation
     - name: Run Docker container
       community.docker.docker_container:
         name: dbs_web_app_container
@@ -69,7 +69,7 @@
         ports:
           - "80:80"
 
-    # ---- Smoke test ----
+    # Test
     - name: Confirm web server is responding
       ansible.builtin.uri:
         url: "http://localhost"
