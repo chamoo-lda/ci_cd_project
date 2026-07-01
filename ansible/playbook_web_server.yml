@@ -1,12 +1,18 @@
 ---
-- name: Install and configure Apache on EC2 instances
+#
+# playbook_web_server.yml
+# =======================
+# Inventory: uses the aws_ec2 plugin (see ansible/inventory/aws_ec2.yml)
+#
+
+- name: Build and deploy Dockerised nginx web app on EC2
   hosts: aws_ec2
   become: true
   vars:
-    ansible_python_interpreter: /usr/bin/python3.10
+    ansible_python_interpreter: auto # let Ansible auto-detect the system Python
 
   tasks:
-    # Update and upgrade packages
+    # ---- Package management ----
     - name: Update apt package cache
       ansible.builtin.apt:
         update_cache: true
@@ -16,34 +22,30 @@
       ansible.builtin.apt:
         upgrade: dist
 
-    # Install GIT and Docker on the EC2 instances
     - name: Install Docker
       ansible.builtin.apt:
         name: docker.io
         state: present
 
-    - name: Install GIT
+    - name: Install Git
       ansible.builtin.apt:
         name: git
         state: present
 
-    # Start and enable Docker service
-    - name: Confirm Docker is installed and running
-      ansible.builtin.command: docker --version
-      register: docker_check
-      changed_when: false
+    # ---- Docker SDK (required by community.docker modules) ----
+    - name: Install Docker SDK for Python on the target
+      ansible.builtin.pip:
+        name: docker
+        state: present
 
-    - name: Git clone a folder from repository
+    # ---- Source code ----
+    - name: Clone or update the repository
       ansible.builtin.git:
         repo: "https://github.com/chamoo-lda/ci_cd_project.git"
         dest: "/home/ubuntu/ci_cd_project"
+        force: true # overwrite local changes on re-run
 
-    - name: Git pull the latest changes from the repository
-      ansible.builtin.git:
-        repo: "https://github.com/chamoo-lda/ci_cd_project.git"
-        dest: "/home/ubuntu/ci_cd_project"
-        force: true
-
+    # ---- Docker image ----
     - name: Build Docker image from Dockerfile
       community.docker.docker_image:
         name: dbs_web_app
@@ -52,6 +54,7 @@
           path: /home/ubuntu/ci_cd_project
         state: present
 
+    # ---- Docker container ----
     - name: Run Docker container
       community.docker.docker_container:
         name: dbs_web_app_container
@@ -61,7 +64,8 @@
         ports:
           - "80:80"
 
-    - name: Confirm webserver in docker container is running
+    # ---- Smoke test ----
+    - name: Confirm web server is responding
       ansible.builtin.uri:
         url: "http://localhost"
         status_code: 200
