@@ -5,3 +5,4 @@ terraform/.terraform/providers/registry.terraform.io/hashicorp/aws/6.52.0/linux_
 terraform/.terraform.lock.hcl
 terraform/.terraform/providers/registry.terraform.io/hashicorp/aws/6.52.0/linux_amd64/LICENSE.txt
 terraform/README.md
+ansible/terraform.tfstate
