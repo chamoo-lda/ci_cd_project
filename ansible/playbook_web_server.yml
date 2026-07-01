@@ -27,23 +27,7 @@
         name: git
         state: present
 
-    # Start and enable Apache service
-    - name: Ensure Apache is started and enabled on boot
-      ansible.builtin.service:
-        name: apache2
-        state: started
-        enabled: true
-
-    - name: Confirm Apache is responding
-      ansible.builtin.uri:
-        url: "http://localhost"
-        status_code: 200
-      register: apache_check
-
-    - name: Show Apache check result
-      ansible.builtin.debug:
-        msg: "Apache is up and responding with status {{ apache_check.status }}"
-
+    # Start and enable Docker service
     - name: Confirm Docker is installed and running
       ansible.builtin.command: docker --version
       register: docker_check
