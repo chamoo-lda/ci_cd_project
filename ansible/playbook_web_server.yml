@@ -37,7 +37,6 @@
       ansible.builtin.git:
         repo: "https://github.com/chamoo-lda/ci_cd_project.git"
         dest: "/home/ubuntu/ci_cd_project"
-        force: true
 
     - name: Build Docker image from Dockerfile
       ansible.builtin.docker_image:
