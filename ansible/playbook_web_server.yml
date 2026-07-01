@@ -16,7 +16,7 @@
       ansible.builtin.apt:
         upgrade: dist
 
-    # Install Apache2 and Docker on the EC2 instances
+    # Install Apache2, GIT and Docker on the EC2 instances
     - name: Install Apache2
       ansible.builtin.apt:
         name: apache2
@@ -25,6 +25,11 @@
     - name: Install Docker
       ansible.builtin.apt:
         name: docker.io
+        state: present
+
+    - name: Install GIT
+      ansible.builtin.apt:
+        name: git
         state: present
 
     # Start and enable Apache service
@@ -43,3 +48,14 @@
     - name: Show Apache check result
       ansible.builtin.debug:
         msg: "Apache is up and responding with status {{ apache_check.status }}"
+
+    - name: Confirm Docker is installed and running
+      ansible.builtin.command: docker --version
+      register: docker_check
+      changed_when: false
+
+    - name: Git clone a folder from repository
+      ansible.builtin.git:
+        repo: "https://github.com/chamoo-lda/ci_cd_project.git"
+        dest: "/home/ubuntu/ci_cd_project"
+        force: true
