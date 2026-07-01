@@ -16,12 +16,7 @@
       ansible.builtin.apt:
         upgrade: dist
 
-    # Install Apache2, GIT and Docker on the EC2 instances
-    - name: Install Apache2
-      ansible.builtin.apt:
-        name: apache2
-        state: present
-
+    # Install GIT and Docker on the EC2 instances
     - name: Install Docker
       ansible.builtin.apt:
         name: docker.io
@@ -59,3 +54,18 @@
         repo: "https://github.com/chamoo-lda/ci_cd_project.git"
         dest: "/home/ubuntu/ci_cd_project"
         force: true
+
+    - name: Build Docker image from Dockerfile
+      ansible.builtin.docker_image:
+        name: dbs_web_app
+        path: /home/ubuntu/ci_cd_project
+        buildargs:
+
+    - name: Run Docker container
+      ansible.builtin.docker_container:
+        name: dbs_web_app_container
+        image: dbs_web_app
+        state: started
+        restart_policy: always
+        ports:
+          - "80:80"
