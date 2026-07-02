@@ -8,6 +8,7 @@ on:
 
 env:
   AWS_REGION: eu-west-1
+  AWS_DEFAULT_REGION: eu-west-1
 
 jobs:
   terraform:
@@ -16,6 +17,8 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    outputs:
+      public_ip: ${{ steps.save_ip.outputs.public_ip }}
     steps:
       - uses: actions/checkout@v4
 
@@ -35,7 +38,8 @@ jobs:
           TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
 
       - name: Save EC2 details
-        run: echo "PUBLIC_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
+        id: save_ip
+        run: echo "public_ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
 
   deploy:
@@ -60,5 +64,16 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ansible-user
           chmod 600 ~/.ssh/ansible-user
 
+      - name: Write dynamic inventory with IP
+        run: |
+          cat > /tmp/inventory.yml <<EOF
+          all:
+            hosts:
+              app_server:
+                ansible_host: ${{ needs.terraform.outputs.public_ip }}
+                ansible_user: ubuntu
+                ansible_ssh_private_key_file: ~/.ssh/ansible-user
+          EOF
+
       - name: Run Ansible Playbook
-        run: ansible-playbook -i ansible/inventory/aws_ec2.yml ansible/playbook_web_server.yml
+        run: ansible-playbook -i /tmp/inventory.yml ansible/playbook_web_server.yml
