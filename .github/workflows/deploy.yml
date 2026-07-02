@@ -67,7 +67,7 @@ jobs:
       - name: Write dynamic inventory with IP
         run: |
           cat > /tmp/inventory.yml <<EOF
-          all:
+          aws_ec2:
             hosts:
               app_server:
                 ansible_host: ${{ needs.terraform.outputs.public_ip }}
