@@ -1,0 +1,13 @@
+# Terraform variables for ci_cd_project
+# Copy this to terraform.tfvars and fill in your values
+
+# AWS region (default: eu-west-1)
+# aws_region = "eu-west-1"
+
+# AWS profile to use for local runs (default: terraform-access)
+# Set to "" to use environment variables instead
+# aws_profile = "terraform-access"
+
+# SSH public key for EC2 instance access
+# Paste the contents of ~/.ssh/ansible-user.pub here
+# ssh_public_key = "ssh-ed25519 AAAAC3..."

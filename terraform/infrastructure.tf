@@ -23,7 +23,7 @@ data "aws_ami" "ubuntu" {
 #================================
 resource "aws_key_pair" "deployer" {
   key_name   = "ansible-user"
-  public_key = "${file("/home/chamoo/.ssh/ansible-user.pub")}"
+  public_key = var.ssh_public_key
 }
 
 #=================================
@@ -62,7 +62,7 @@ resource "aws_instance" "server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro"
   key_name = "ansible-user"
-  security_groups = ["${aws_security_group.webserver_access.name}"]
+  vpc_security_group_ids = [aws_security_group.webserver_access.id]
 
   tags = {
     Name = "app_server"

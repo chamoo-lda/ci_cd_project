@@ -30,3 +30,8 @@ variable "aws_profile" {
   type    = string
   default = "terraform-access"
 }
+
+variable "ssh_public_key" {
+  type        = string
+  description = "SSH public key content for EC2 access"
+}
