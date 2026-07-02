@@ -1,6 +1,5 @@
 # inventory/aws_ec2.yml
 plugin: amazon.aws.aws_ec2
-profile: terraform-access
 
 regions:
   - eu-west-1

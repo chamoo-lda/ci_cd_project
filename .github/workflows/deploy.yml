@@ -47,7 +47,7 @@ jobs:
 
       - name: Install Ansible & Collections
         run: |
-          pip install ansible
+          pip install ansible "boto3>=1.35.0" "botocore>=1.35.0"
           ansible-galaxy collection install amazon.aws community.docker
 
       - name: Write SSH key
