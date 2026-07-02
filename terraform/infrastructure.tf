@@ -24,6 +24,10 @@ data "aws_ami" "ubuntu" {
 resource "aws_key_pair" "deployer" {
   key_name   = "ansible-user"
   public_key = var.ssh_public_key
+
+  lifecycle {
+    ignore_changes = [public_key]
+  }
 }
 
 #=================================
