@@ -7,6 +7,12 @@ terraform {
       version = "~> 6.0"
     }
   }
+
+  backend "s3" {
+    bucket = "ci-cd-tfstate-e99f7ef9"
+    key    = "terraform.tfstate"
+    region = "eu-west-1"
+  }
 }
 
 provider "aws" {
